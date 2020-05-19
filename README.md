@@ -1,7 +1,8 @@
 # R_Workshop_WHRI
 
-Author: [Jonathan Simkin](https://github.com/jdsimkin04)
-Date: May 19th 2020
+**Author**: [Jonathan Simkin](https://github.com/jdsimkin04)
+
+**Date**: May 19th 2020
 
 A short and sweet R basics tutorial for a (bright and enthusiasti) cohort of MPH Students.
 
@@ -15,6 +16,7 @@ Awesome packages used here:
 * hrbrthemes 
 * kableExtra
 * viridisLite
+* gapminder
 
 DT did not make it into the rmd but I highly recommend this package for creating data tables.
 
