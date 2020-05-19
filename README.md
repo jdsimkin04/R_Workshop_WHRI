@@ -20,5 +20,5 @@ DT did not make it into the rmd but I highly recommend this package for creating
 
 Have fun with R!
 
-<https://giphy.com/gifs/coding-zOvBKUUEERdNm>
+![coding](https://giphy.com/gifs/coding-zOvBKUUEERdNm)
 
