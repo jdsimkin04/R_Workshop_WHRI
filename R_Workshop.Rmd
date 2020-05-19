@@ -1,0 +1,483 @@
+---
+title: "R Workshop: Working with Data Basics"
+author: |
+  | Jonathan Simkin
+  | email: j.simkin@alumni.ubc.ca
+  | twitter: @jdsimkin04
+  | github: https://github.com/jdsimkin04 
+date: "15/05/2020"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 4
+    number_sections: false
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+
+# Working with data
+
+Here are a few tools you can use when you are working with data!
+
+**A few shoutouts:**
+
+* [R 4 Data Science](https://r4ds.had.co.nz/): This is the ultimate guide. Ready to pick up and learn.
+* [Stat 545](https://stat545.com/): Ultimate guide #2. Not as ready to pick up and learn but very useful.
+
+# A few first steps
+
+1. [Download R](https://cran.r-project.org/)
+2. [Download R Studio](https://rstudio.com/)
+
+## R notebooks vs. R markdown vs. R script
+
+Notebooks and markdowns are great ways to annotate/write as you code... This is the perfect example! We can write text to produce a document and code in chunks like this below:
+
+```{r}
+library(tidyverse)
+library(gapminder)
+```
+
+R script are the original way of coding in R and it doesn't have the nice functionality of writing notes while you code... though if you don't need notes/writing, just throw all your code in an R script and you can run the whole thing in a single go pretty easily..
+
+## Load packages
+
+**Wait!** What are packages?
+
+R packages are *a unit of shareable code*. 
+* more info [here](http://r-pkgs.had.co.nz/intro.html)
+
+This means, people can download an *R package* and use the code that is written in there. Of course, you can build all your functions if you wanted to but if other's have already done so... and they've been peer reviewed and tried and tested... why not use those?
+
+**Don't reinvent the wheel!**
+
+### The most important packages you will ever use
+
+* Tidyverse
+  + a bunch of packages built into one cool super R package
+
+Honestly... this is all you need. But if you want more... 
+
+* DT
+* epitools
+* all markdown associated packages
+
+There are tons...
+
+### Ok Now let's load packages
+
+Install package first... only have to do this once. ever.
+Use the library function to load the code in the package
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+# install.packages("gapminder")
+library(gapminder)
+```
+
+
+## Gapminder on the Fly
+
+**What is Gapminder?**
+
+Free open dataset from Gapminder (an organization).
+* more info [here](https://www.gapminder.org/about-gapminder/)
+
+Need to download gapminder and load it before you can see it.
+
+FYI Other open dataset [here](https://r-dir.com/reference/datasets.html).
+
+### Loading your data
+
+There are a few tools for you to use...
+
+Gapminder is already loaded in through the package... so we're all good here.
+
+But if you want import your data... you can use read_csv() and if oyu put a question mark in front of it and read it... well. you'll get all the info you need. You ca also use the import dataset on the top right of your R studio console and look for **Import Dataset**.. you'll get ton's of options there.
+
+```{r}
+?read_csv
+```
+
+
+## Viewing your dataset
+
+First thing we want to do is get familiar with our data...
+
+* What does my data look like - long? wide?
+* How many records?
+* What are my variables?
+* What type of variables are they?
+
+View entire dataset
+```{r}
+view(gapminder)
+```
+
+View summaries of dataset
+```{r}
+str(gapminder)
+```
+
+head function to view first 5 rows
+```{r}
+head(gapminder)
+```
+
+you can make this a whole lot prettier with kable() and kable_styling() functions from**knitr** and **kableExtra** packages
+```{r}
+library(knitr)
+library(kableExtra)
+gapminder %>% 
+  head() %>% 
+  kable() %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+Basic statistical summaries of variables
+```{r}
+summary(gapminder) 
+```
+
+Ok we know our data!
+
+but wait.. quick changes... trust me..
+
+```{r}
+gapminder <-
+  gapminder %>% 
+  mutate(country = as.character(country),
+         continent = as.character(continent))
+```
+
+
+## Some research questions...
+
+Does GDP impact life expectancy?
+... others?
+
+# Does GDP impact life expectancy?
+
+## Distribution of variables
+
+```{r}
+summary(gapminder$lifeExp)
+summary(gapminder$gdpPercap)
+```
+
+### Life expectancy
+Plot the distribution of each variable (univariate) and the bivariate
+```{r}
+gapminder %>% 
+  ggplot(., aes(x = lifeExp)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "All the data.. no filters",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  )
+```
+
+Ok but maybe we want to filter on year or look across years?? so we see all the countries at one point in time?
+
+Let's look across time.
+
+```{r}
+gapminder %>% 
+  ggplot(., aes(x = lifeExp)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "by year",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  facet_wrap(~year)
+```
+
+Let's look at one year.. say 2007
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = lifeExp)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+```
+
+...
+I don't like these graphs as much yet so let's make them a bit prettier with the ggthemes package.
+
+```{r}
+library(ggthemes)
+library(hrbrthemes)
+hrbrthemes::import_roboto_condensed()
+theme_set(theme_bw())
+#or
+theme_set(theme_ipsum())
+```
+
+We can also make these interactive...
+
+We can also make these interactive with plotly or ggiraph
+```{r}
+library(plotly)
+```
+
+```{r}
+p <- gapminder %>% 
+  ggplot(., aes(x = lifeExp)) +
+  geom_histogram(colour = "black", size = 0.25) +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+
+ggplotly(p)
+```
+
+
+### GDP
+Plot the distribution of each variable (univariate) and the bivariate
+```{r}
+gapminder %>% 
+  ggplot(., aes(x = gdpPercap)) +
+  geom_histogram(colour = "black", size = 0.25) +
+  labs(
+    title = "Distribution of GDP per capita",
+    subtitle = "All the data.. no filters",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+```
+
+Ok but maybe we want to filter on year or look across years?? so we see all the countries at one point in time?
+
+Let's look across time.
+
+```{r}
+gapminder %>% 
+  ggplot(., aes(x = gdpPercap)) +
+  geom_histogram(colour = "black", size = 0.25) +
+  labs(
+    title = "Distribution of GDP per capita",
+    subtitle = "by year",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  facet_wrap(~year)
+```
+
+Let's look at one year.. say 2007
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap)) +
+  geom_histogram(colour = "black", size = 0.25) +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "All the data.. no filters",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+```
+
+```{r}
+p <- gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap)) +
+  geom_histogram(colour = "black", size = 0.25) +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "All the data.. no filters",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+
+ggplotly(p)
+```
+
+
+### Life expectancy by GDP
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "GDP per capita",
+    y = "Life expectancy (years)",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+```
+
+How about adding country as another data element?
+
+```{r}
+library(viridisLite)
+
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap, y = lifeExp, colour = as.character(country))) +
+  geom_point() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "GDP per capita",
+    y = "Life expectancy (years)",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  scale_colour_viridis_d()
+```
+
+Ok, the legend doesn't work well with the graph.. too many countries! maybe take out the legend for now.
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap, y = lifeExp, colour = country)) +
+  geom_point() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "GDP per capita",
+    y = "Life expectancy (years)",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  scale_colour_viridis_d() +
+  theme(
+    legend.position = "none"
+  )
+```
+
+That's better.
+
+interactive? Yes please. You'll see we can actually add in the legend again with the interactivity.
+```{r}
+p <- gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap, y = lifeExp, colour = country)) +
+  geom_point() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "GDP per capita",
+    y = "Life expectancy (years)",
+    colour = "Country",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  scale_colour_viridis_d() 
+
+ggplotly(p)
+```
+
+#### Transformations
+See here for transformations[http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations#log-and-sqrt-transformations]
+
+Our data doesn't look linear... transform our data? Use scale_x_log10()
+
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = gdpPercap, y = lifeExp, colour = country)) +
+  geom_point() +
+  geom_smooth(aes(group = 1), lty = 2, colour = "grey80", se = F) +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "Log GDP per capita",
+    y = "Life expectancy (years)",
+    colour = "Country",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  scale_colour_viridis_d() +
+  theme_bw() +
+  theme(
+    legend.position = "none"
+  ) +
+  scale_x_log10()
+```
+
+or create a new column in your data! using mutate()
+```{r}
+gapminder2 <- 
+gapminder %>% 
+  mutate(loggdp = log10(gdpPercap)) 
+
+gapminder2 %>% 
+  head()
+```
+
+Plot that
+```{r}
+p <- 
+gapminder2 %>% 
+  filter(year == 2007) %>%
+  ggplot(., aes(x = loggdp, y = lifeExp, colour = country)) +
+  geom_smooth(aes(group = 1), lty = 2, colour = "grey80", se = F) +
+  geom_point() +
+  labs(
+    title = "Distribution of life expectancy in 2007",
+    subtitle = "in 2007",
+    x = "Log GDP per capita",
+    y = "Life expectancy (years)",
+    colour = "Country",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  scale_colour_viridis_d()
+
+ggplotly(p)
+```
+
+Linear model fit
+```{r}
+gapminder2 %>% 
+  filter(year == 2007) %>%
+  lm(data = ., lifeExp ~ gdpPercap)
+
+#don't forget to log transform
+gapminder2 %>% 
+  filter(year == 2007) %>%
+  lm(data = ., lifeExp ~ log10(gdpPercap))
+```
+
+linear regression line
+```{r}
+gapminder2 %>% 
+  filter(year == 2007) %>%
+  ggplot(., aes(x = loggdp, y = lifeExp, colour = country)) +
+  geom_smooth(method = "lm", aes(group = 1), lty = 2, colour = "grey80", se = F) +
+  geom_point() +
+  labs(
+    title = "Distribution of life expectancy in 2007",
+    subtitle = "in 2007",
+    x = "Log GDP per capita",
+    y = "Life expectancy (years)",
+    colour = "Country",
+    caption = "Data source: Gapminder from gapminder package"
+  ) +
+  scale_colour_viridis_d() +
+  theme(
+    legend.position = "none"
+  )
+```
+
