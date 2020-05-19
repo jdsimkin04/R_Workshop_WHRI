@@ -4,7 +4,7 @@
 
 **Date**: May 19th 2020
 
-A short and sweet R basics tutorial for a (bright and enthusiasti) cohort of MPH Students.
+A short and sweet R basics tutorial for a (bright and enthusiastic) cohort of MPH Students.
 
 Find the R markdown [here](https://github.com/jdsimkin04/R_Workshop_WHRI/blob/master/R_Workshop.Rmd). Covers a short exploratory analysis of Gapminder dataset.
 
