@@ -5,7 +5,7 @@ author: |
   | email: j.simkin@alumni.ubc.ca
   | twitter: @jdsimkin04
   | github: https://github.com/jdsimkin04 
-date: "15/05/2020"
+date: "28/05/2021"
 output: 
   html_document:
     toc: true
@@ -383,7 +383,7 @@ gapminder %>%
     y = "Life expectancy (years)",
     caption = "Data source: Gapminder from gapminder package"
   ) +
-  scale_colour_viridis_d()
+  scale_colour_viridis_d() 
 ```
 
 Ok, the legend doesn't work well with the graph.. too many countries! maybe take out the legend for now.
@@ -427,7 +427,7 @@ ggplotly(p)
 ```
 
 #### Transformations
-See here for transformations[http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations#log-and-sqrt-transformations]
+See here for [transformations](http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations#log-and-sqrt-transformations)
 
 Our data doesn't look linear... transform our data? Use scale_x_log10()
 
