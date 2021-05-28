@@ -36,7 +36,7 @@ Here are a few tools you can use when you are working with data!
 
 Notebooks and markdowns are great ways to annotate/write as you code... This is the perfect example! We can write text to produce a document and code in chunks like this below:
 
-```{r}
+```{r setup, warning = F, results='hide'}
 library(tidyverse)
 library(gapminder)
 ```
@@ -128,9 +128,12 @@ head(gapminder)
 ```
 
 you can make this a whole lot prettier with kable() and kable_styling() functions from**knitr** and **kableExtra** packages
-```{r}
+```{r, , warning = F, results='hide'}
 library(knitr)
 library(kableExtra)
+```
+
+```{r}
 gapminder %>% 
   head() %>% 
   kable() %>% 
@@ -219,19 +222,50 @@ gapminder %>%
 ...
 I don't like these graphs as much yet so let's make them a bit prettier with the ggthemes package.
 
-```{r}
+```{r, warning = F, results='hide'}
 library(ggthemes)
 library(hrbrthemes)
+```
+
+```{r}
 hrbrthemes::import_roboto_condensed()
 theme_set(theme_bw())
-#or
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = lifeExp)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
+```
+
+
+Or...
+```{r}
+
 theme_set(theme_ipsum())
+
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(., aes(x = lifeExp)) +
+  geom_histogram() +
+  labs(
+    title = "Distribution of life expectancy",
+    subtitle = "in 2007",
+    x = "Life expectancy",
+    y = "Frequency",
+    caption = "Data source: Gapminder from gapminder package"
+  ) 
 ```
 
 We can also make these interactive...
 
 We can also make these interactive with plotly or ggiraph
-```{r}
+```{r, warning = F, results='hide'}
 library(plotly)
 ```
 
@@ -335,7 +369,9 @@ How about adding country as another data element?
 
 ```{r}
 library(viridisLite)
+```
 
+```{r, warning = F, results='hide'}
 gapminder %>% 
   filter(year == 2007) %>% 
   ggplot(., aes(x = gdpPercap, y = lifeExp, colour = as.character(country))) +
